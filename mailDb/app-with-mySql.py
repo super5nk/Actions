@@ -3,15 +3,16 @@ from flaskext.mysql import MySQL
 app = Flask(__name__)
 
 # MySQL ayarlari
-app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Clarusway_1'
-app.config['MYSQL_DATABASE_DB'] = 'clarusway'
-app.config['MYSQL_DATABASE_HOST'] = 'claruswaydb.c1gusaos8lxd.us-east-1.rds.amazonaws.com'
-mysql = MySQL()
-mysql.init_app(app)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./email.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
+#app.config['MYSQL_DATABASE_USER'] = 'admin'
+#app.config['MYSQL_DATABASE_PASSWORD'] = 'Clarusway_1'
+#app.config['MYSQL_DATABASE_DB'] = 'clarusway'
+#app.config['MYSQL_DATABASE_HOST'] = 'claruswaydb.c1gusaos8lxd.us-east-1.rds.amazonaws.com'
+#mysql = MySQL()
+#mysql.init_app(app)
+ #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./email.db'
+ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Clarusway_1@maildb.c1gusaos8lxd.us-east-1.rds.amazonaws.com/clarusway'
+ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+ db = SQLAlchemy(app)
 
 
 
