@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
+from flaskext.mysql import MySQL
 app = Flask(__name__)
 mysql = MySQL()
 # MySQL ayarlari
