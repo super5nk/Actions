@@ -1,15 +1,13 @@
 from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 from flaskext.mysql import MySQL
 app = Flask(__name__)
-mysql = MySQL()
+
 # MySQL ayarlari
 app.config['MYSQL_DATABASE_USER'] = 'admin'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'Clarusway_1'
 app.config['MYSQL_DATABASE_DB'] = 'clarusway'
 app.config['MYSQL_DATABASE_HOST'] = 'claruswaydb.c1gusaos8lxd.us-east-1.rds.amazonaws.com'
-
+mysql = MySQL()
 mysql.init_app(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./email.db'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
