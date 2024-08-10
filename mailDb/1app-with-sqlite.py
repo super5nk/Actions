@@ -2,27 +2,14 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 app = Flask(__name__)
-mysql = MySQL()
-# MySQL ayarlari
-app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Clarusway_1'
-app.config['MYSQL_DATABASE_DB'] = 'clarusway'
-app.config['MYSQL_DATABASE_HOST'] = 'claruswaydb.c1gusaos8lxd.us-east-1.rds.amazonaws.com'
-
-mysql.init_app(app)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./email.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
-
-
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./email.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 with app.app_context():
     drop_table = text('DROP TABLE IF EXISTS users;')
     users_table = text(""" 
-    CREATE TABLE users(
-    username VARCHAR NOT NULL PRIMARY KEY,
-    email VARCHAR);
+    CREATE TABLE users(username VARCHAR NOT NULL PRIMARY KEY,email VARCHAR);
     """)
     data = text("""
     INSERT INTO users
