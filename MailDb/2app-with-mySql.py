@@ -17,7 +17,7 @@ db_config = {
     'user': 'admin',
     'password': 'Clarusway_1',
     'host': 'database-1.c1gusaos8lxd.us-east-1.rds.amazonaws.com', # Kendi RDS MySQL DB endpointinizi giriniz !!! ..........t-1.rds.amazonaws.com
-    'database': 'clarus'
+    'database': 'clarusway'
 }
 
 def execute_query(query, params=None):

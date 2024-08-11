@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 # Kendi RDS MySQL DB endpointinizi giriniz !!!  @.........../clarusway
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Clarusway_1@database-1.c1gusaos8lxd.us-east-1.rds.amazonaws.com/clarus'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Clarusway_1@database-1.c1gusaos8lxd.us-east-1.rds.amazonaws.com/clarusway'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

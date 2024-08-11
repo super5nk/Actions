@@ -1,0 +1,146 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: |
+  This CloudFormation template creates an EC2 instance using the Amazon 
+  Linux 2023 AMI. The user can select a UserData script to run different 
+  Python applications. The template installs and runs the required Python 
+  packages based on the selected application. Additionally, 
+  an IAM role is assigned to the EC2 instance, providing access to 
+  Secrets Manager. The EC2 instance is associated with a security group 
+  that opens ports for HTTP (80), SSH (22), and the web application (8080)
+Parameters:
+  latestAmiId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
+
+  InstanceType:
+    Description: EC2 instance tipi
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+    ConstraintDescription: Geçerli bir EC2 instance tipi seçin.
+
+  myKeyPairName:
+    Description: Write your KeyName
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: Paul_First_Key
+
+  UserDataOption:
+    Description: Calistirilacak UserData komut dosyasini secin
+    Type: String
+    AllowedValues:
+      - 1app-with-sqlite.py
+      - 2app-whit-SqlAlchemy-MySQL.py
+      - 2app-with-mySql.py
+      - 3app-with-SecretManger.py
+    Default: 1app-with-sqlite.py
+
+  GitHubFolderOption:
+    Description: Github taki web sayfanizin ana dizinini girin
+    Type: String
+    Default: https://raw.githubusercontent.com/superim/Actions/main/MailDb
+
+Resources:
+  FlaskEc2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref latestAmiId #ami-0427090fd1714168b #current latest ami
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref myKeyPairName #Paul_First_Key  #change with yours
+      IamInstanceProfile: !Ref IamProfile
+      SecurityGroups:
+        - !Ref FlaskInstanceSecGrp
+      Tags:
+        - Key: Name
+          Value:
+            Fn::Sub: "Web Server of ${AWS::StackName} Stack"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          dnf update -y
+          dnf install python3 -y
+          dnf install python3-pip -y
+          #SQL Lite ile calisacak app icin yeterli
+          pip3 install flask
+          pip install flask_sqlalchemy
+          #-----------------------------
+          #SQLAlchhemy paketi kullanilarak MySQL DB ye baglanmak icin
+          pip install pymysql
+          #-----------------------------
+          # MySQL DB ile ye baglanmak icin
+          pip install mysql-connector-python
+          #-----------------------------
+          # AWS Secret Manager kullanarak MySQL DB  baglanmak icin
+          pip install boto3
+          #-----------------------------
+          dnf install git -y
+          cd /home/ec2-user
+          wget -P templates ${GitHubFolderOption}/templates/add-email.html
+          wget -P templates ${GitHubFolderOption}/templates/emails.html
+          wget ${GitHubFolderOption}/1app-with-sqlite.py
+          wget ${GitHubFolderOption}/2app-whit-SqlAlchemy-MySQL.py
+          wget ${GitHubFolderOption}/2app-with-mySql.py
+          wget ${GitHubFolderOption}/3app-with-SecretManger.py
+          python3 ${UserDataOption}
+
+  FlaskInstanceSecGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow Sec-Grp-80-22-8008 # Required
+      GroupName: Flask-Sec-Grp-80-22-8080
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: Flask-Sec-Grp-80-22-8080
+  SecretManagerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite  # SecretsManagerReadWrite
+
+  IamProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref SecretManagerRole
+
+Outputs:
+  StackNameOutput:
+    Description: The name of the CloudFormation stack
+    Value: !Ref "AWS::StackName"
+
+  webServerURL:
+    Description: Gives the URL of Webserver
+    Value: !Sub
+      - http://${PIA}:8080
+      - PIA: !GetAtt FlaskEc2.PublicDnsName
+  WebsiteURL2:
+    Value: !Join
+      - ""
+      - - "http://"
+        - !GetAtt FlaskEc2.PublicDnsName
+        - ":8080"
+    Description: Email Database Web Site URL
