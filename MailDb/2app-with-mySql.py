@@ -16,8 +16,8 @@ app = Flask(__name__)
 db_config = {
     'user': 'admin',
     'password': 'Clarusway_1',
-    'host': '..........t-1.rds.amazonaws.com', # Kendi RDS MySQL DB endpointinizi giriniz !!! ..........t-1.rds.amazonaws.com
-    'database': 'clarusway'
+    'host': 'database-1.c1gusaos8lxd.us-east-1.rds.amazonaws.com', # Kendi RDS MySQL DB endpointinizi giriniz !!! ..........t-1.rds.amazonaws.com
+    'database': 'clarus'
 }
 
 def execute_query(query, params=None):
