@@ -41,8 +41,8 @@ Parameters:
   GitHubFolderOption:
     Description: Github taki web sayfanizin ana dizinini girin
     Type: String
-    Default: https://raw.githubusercontent.com/superim/Actions/main/MailDb
-
+    Default: https://raw.githubusercontent.com/...../...../main/..... 
+      # yukardaki Github Folder i  kendi Github hesabinizin RAW dizin yapisina gore duzenleyiniz. 
 Resources:
   FlaskEc2:
     Type: AWS::EC2::Instance
